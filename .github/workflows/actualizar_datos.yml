@@ -1,0 +1,24 @@
+name: Actualizar datos
+on:
+  schedule:
+    - cron: "0 7 * * *"
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r pipeline/requirements.txt
+      - name: DGII (RNC)
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 6 * * 1'
+        run: python pipeline/load_dgii.py
+      - name: DGCP (contratos)
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 7 * * *'
+        run: python pipeline/load_dgcp.py
