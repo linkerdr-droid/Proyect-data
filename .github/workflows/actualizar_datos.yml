@@ -22,3 +22,8 @@ jobs:
       - name: DGCP (contratos)
         if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 7 * * *'
         run: python pipeline/load_dgcp.py
+      - name: Prensa (IA)
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 7 * * *'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python pipeline/load_prensa.py
